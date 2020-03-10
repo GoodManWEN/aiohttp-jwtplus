@@ -150,7 +150,12 @@ url_exts = [    '/index.html' ,
                 '/setattr',
                 '/404',
                 ]
+                
+# Simulate you've alreadly got token feedback from server.
+# If you would like to generate token(without scheme) ,it accepts a dictionary
+# and items in which would be updated to jwt source payload. 
 jwt = secret_manager.encode({'username':'jacky'})
+
 headers = {
     'Authorization': "Bearer " + jwt.decode()
 }
