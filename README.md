@@ -108,7 +108,7 @@ jwt = JWTHelper(
             secret_manager = secret_manager , 
             token_getter = basic_token_getter,  # default
             identifier =  basic_identifier ,    # default
-            whitelist = ('/authentication', ) , # must be a tuple
+            whitelist = ('/authentication', ) , # must be a tuple ,accepts regular expresion.
             protected_apis = ['/setattr',] 
         )
 
