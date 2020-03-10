@@ -22,9 +22,154 @@ path | remarks | authorized destination |  unauthorized destination
 -|-|-|-
 /index.html | Entry of main functional SPA | /index.html | /login.html
 /login.html | Entry of login page. Independent SPA | /index.html | /login.html
-/login_api  | Login api , one in jwt whitelist. | /login_api | login_api
+/login_api  | Login api , one in jwt whitelist. | /login_api | /login_api
 /setattr_api | One of protected apis. | /setattr_api | 403 or 401
 /404        | Undefined page | /index.html | /login.html
 
-## Example
+*/\* Status code 404 handled in SPA \*/*
 
+## Example
+`server_basic.py` 
+\# here's a basic aiohttp hello-world server with four kinds of routing requirement respectively.
+
+```Python3
+from aiohttp import web
+
+routes = web.RouteTableDef()
+
+@routes.get('/index.html')
+async def main_spa_page(request):
+    return web.Response(text="this is index.html")
+
+@routes.get('/login.html')
+async def login_spa_page(request):
+    return web.Response(text="this is login.html")
+
+@routes.get('/authentication')
+async def loginapi(request):
+    return web.Response(text="loginapi called")
+
+@routes.get('/setattr')
+async def setattr(request):
+    return web.Response(text= 'this is a procted api')
+
+app = web.Application(middlewares=[])
+app.add_routes(routes)
+web._run_app(app)
+```
+
+`server.py` 
+\# Add several lines to easily start a server with jwtplus-plugin.
+```Python3
+import asyncio
+from aiohttp import web
+from aiohttp_jwtplus import (
+    SecretManager,
+    JWTHelper,
+    basic_identifier,
+    basic_token_getter,
+    show_request_info
+)
+
+routes = web.RouteTableDef()
+
+@routes.get('/index.html')
+async def main_spa_page(request):
+    show_request_info(request)
+    return web.Response(text="this is index.html")
+
+@routes.get('/login.html')
+async def login_spa_page(request):
+    show_request_info(request)
+    return web.Response(text="this is login.html")
+
+@routes.get('/authentication')
+async def loginapi(request):
+    show_request_info(request)
+    return web.Response(text="loginapi called")
+
+@routes.get('/setattr')
+async def setattr(request):
+    show_request_info(request)
+    return web.Response(text= 'this is a procted api')
+
+secret_manager = SecretManager( secret = 'testsecret' ,    # default empty, will generate a random string.
+                                refresh_interval = '30d' , # default 0 ,no auto refresh. Accept string or int 
+                                scheme = "Bearer" ,        # default.
+                                algorithm = 'HS256' ,      # default.
+                                exptime = '30d' ,          # default.
+                                )
+
+jwt = JWTHelper(
+            unauthorized_return_route = '/login.html' , 
+            # this's an exception which means if you've alreadly logined ,you cannot access to this page. 
+            unauthorized_return_route_handler = login_spa_page,
+            authorized_return_page_handler = main_spa_page,
+            secret_manager = secret_manager , 
+            token_getter = basic_token_getter,  # default
+            identifier =  basic_identifier ,    # default
+            whitelist = ('/authentication', ) , # must be a tuple
+            protected_apis = ['/setattr',] 
+        )
+
+app = web.Application(middlewares=[ 
+                jwt.pre_jwt_identification(),
+                jwt.post_jwt_router(),
+                                ])
+app.add_routes(routes)
+loop = asyncio.get_event_loop()
+loop.create_task(secret_manager.auto_refresh())
+# Explicit trigger eventloop since we starts a secret-auto-refresh thread.  
+loop.run_until_complete(web._run_app(app))
+```
+
+`client.py` 
+\# For a quick test with python pretended frontend.
+```Python3
+import asyncio
+from aiohttp import ClientSession 
+from aiohttp_jwtplus import (
+    SecretManager,
+    JWTHelper,
+    basic_identifier,
+    basic_token_getter,
+    show_request_info
+)
+
+
+secret_manager = SecretManager( secret = 'testsecret' ,    # default empty, will generate a random string.
+                                refresh_interval = 0 ,     # default 0 , no auto refresh.
+                                algorithm = 'HS256' ,      # default.
+                                exptime = '30d' ,          # default.
+                                )
+
+url_pattern = 'http://localhost:8080{}'
+url_exts = [    '/index.html' ,
+                '/login.html' ,
+                '/authentication',
+                '/setattr',
+                '/404',
+                ]
+jwt = secret_manager.encode({'username':'jacky'})
+headers = {
+    'Authorization': "Bearer " + jwt.decode()
+}
+
+async def main():
+    async with ClientSession() as session:
+        print('######################')
+        print('With authentication')
+        for urlext in url_exts:
+            async with session.get(url_pattern.format(urlext) , headers = headers) as response:
+                text = await response.text()
+                print(f"called {urlext} ,\n\tget statuscode {response.status} , \n\treturn text \"{text}\"")
+        print('######################')
+        print('Without authentication')
+        for urlext in url_exts:
+            async with session.get(url_pattern.format(urlext) , headers={'Authorization':'None'}) as response:
+                text = await response.text()
+                print(f"called {urlext} ,\n\tget statuscode {response.status} , \n\treturn text \"{text}\"")
+
+asyncio.run(main())
+
+```
