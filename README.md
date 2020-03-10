@@ -26,7 +26,7 @@ path | remarks | authorized destination |  unauthorized destination
 /setattr_api | One of protected apis. | /setattr_api | 403 or 401
 /404        | Undefined page | /index.html | /login.html
 
-*/\* Status code 404 handled in SPA \*/*
+*/\* Status code 404 would be handled in SPA \*/*
 
 ## Example
 `server_basic.py` 
