@@ -157,14 +157,12 @@ headers = {
 
 async def main():
     async with ClientSession() as session:
-        print('######################')
-        print('With authentication')
+        print(f'{"#"*22}\nWith authentication')
         for urlext in url_exts:
             async with session.get(url_pattern.format(urlext) , headers = headers) as response:
                 text = await response.text()
                 print(f"called {urlext} ,\n\tget statuscode {response.status} , \n\treturn text \"{text}\"")
-        print('######################')
-        print('Without authentication')
+        print(f'{"#"*22}\nWithout authentication')
         for urlext in url_exts:
             async with session.get(url_pattern.format(urlext) , headers={'Authorization':'None'}) as response:
                 text = await response.text()
