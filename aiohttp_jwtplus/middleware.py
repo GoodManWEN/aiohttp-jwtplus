@@ -44,7 +44,7 @@ class JWTHelper:
         else:
             self._identifier = basic_identifier
 
-    def pre_jwt_identification(self , *args , **kwargs):
+    def pre_jwt_identifier(self , *args , **kwargs):
         
         @web.middleware
         async def _jwtplus(request , handler):

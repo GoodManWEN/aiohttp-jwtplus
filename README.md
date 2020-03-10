@@ -15,7 +15,7 @@ Added a post router for improving security level of SPAs &amp; auto refresh secr
 ## Usage
 - You need to create a SecretManager object ,which manages informations(secret \ scheme \ algorithm \ exp_interval \ auto_refresh_interval etc.) about jwt first.
 - Then you need to create a JWTHelper ,in whose slots you can  definite your business logic ,such as where you get token from ,what you do in identify process etc. If you dont pass them in ,JWTHelper will provides you a basic version of token_getter & identifier ,which simplely gets token from headers['Authorization'] value and then check out if decoded dictionary has key value 'username'.
-- Finally you can create aiohttp.web.Application and pass middlewares in . It's a necessary condition to passin pre_jwt_identification() and post_jwt_router() in order if you would like to activate post router. It's no need to register middleware via decorator first.
+- Finally you can create aiohttp.web.Application and pass middlewares in . It's a necessary condition to passin pre_jwt_identifier() and post_jwt_router() in order if you would like to activate post router. It's no need to register middleware via decorator first.
 
 ## Behaviors of routing under different authorization
 path | remarks | authorized destination |  unauthorized destination
@@ -113,7 +113,7 @@ jwt = JWTHelper(
         )
 
 app = web.Application(middlewares=[ 
-                jwt.pre_jwt_identification(),
+                jwt.pre_jwt_identifier(),
                 jwt.post_jwt_router(),
                                 ])
 app.add_routes(routes)
