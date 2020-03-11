@@ -54,7 +54,7 @@ class SecretManager:
             else:
                 assert isinstance(interval,int)    or isinstance(interval,float)
                 rtv = interval
-            assert rtv >= 0
+            # assert rtv >= 0
             return rtv
         except:
             raise RuntimeError("Invalid interval setted.")
