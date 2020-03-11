@@ -42,7 +42,7 @@ long_description_lines_copy.insert(0,'r"""\n')
 long_description_lines_copy.append('"""\n')
 
 # update __init__ docs
-with open('aiohttp_jwtplus\\__init__.py','r',encoding='utf-8') as f:
+with open('aiohttp_jwtplus/__init__.py','r',encoding='utf-8') as f:
     init_content = f.readlines()
 
 for line in init_content:
@@ -51,7 +51,7 @@ for line in init_content:
     else:
         long_description_lines_copy.append(line)
 
-with open('aiohttp_jwtplus\\__init__.py','w',encoding='utf-8') as f:
+with open('aiohttp_jwtplus/__init__.py','w',encoding='utf-8') as f:
     f.writelines(long_description_lines_copy)
 
 
