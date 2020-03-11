@@ -87,12 +87,11 @@ class JWTHelper:
 
         @web.middleware
         async def _router(request, handler):
-
-            if self._whitelist:
-                if check_if_request_in_whitelist(request.path , self._whitelist):
-                    return await handler(request)
-
             try:
+
+                if self._whitelist:
+                    if check_if_request_in_whitelist(request.path , self._whitelist):
+                        return await handler(request)
                 # handler request part.
                 if request['auth_status'] == 'pass':
                     if request.path == self._unauthorized_return_route:
