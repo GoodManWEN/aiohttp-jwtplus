@@ -7,6 +7,7 @@ async def basic_token_getter(request):
     else:
         try:
             scheme , token = request.headers.get('Authorization').strip().split(' ')
+            assert scheme == 'Bearer'
             return token
         except:
             return web.HTTPForbidden()
