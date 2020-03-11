@@ -46,7 +46,7 @@ class SecretManager:
                 else:
                     assert len(interval) > 0
                     assert interval[-1] in convert_table
-                    matched = re.match('[\d]*[\.]?[\d]+',interval[:-1])
+                    matched = re.match(r'[\d]*[\.]?[\d]+',interval[:-1])
                     assert matched
                     assert matched.span()[1] == len(interval[:-1])
                     rtv = int(float(interval[:-1]) * \
