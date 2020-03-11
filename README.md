@@ -1,5 +1,5 @@
 # aiohttp-jwtplus
-Aiohttp middleware and helper utils for working with JSON web token.
+Aiohttp middleware and helper utils for working with JSON web token(signature).
 Added a post router for improving security level of SPAs &amp; auto refresh secrets.
 
 - Works on Python3.7+
@@ -94,7 +94,7 @@ async def setattr(request):
     return web.Response(text= 'this is a procted api')
 
 secret_manager = SecretManager( secret = 'testsecret' ,    # default empty, will generate a random string.
-                                refresh_interval = '30d' , # default 0 ,no auto refresh. Accept string or int 
+                                refresh_interval = '30d' , # default 0 ,represents secret auto refresh disabled. Accept string or int 
                                 scheme = "Bearer" ,        # default.
                                 algorithm = 'HS256' ,      # default.
                                 exptime = '30d' ,          # default.
@@ -175,4 +175,54 @@ async def main():
 
 asyncio.run(main())
 
+```
+
+`modify_identifier.py` 
+\# Self-modified identifier & token_getter.
+```Python3
+from aiohttp import web
+from aiohttp_jwtplus import (
+    SecretManager,
+    JWTHelper
+)
+
+async def identifier_mod(payload):
+    '''
+    An identifier accepts a payload(as dictionary of jwt decoded result),
+    and whose return value will be stored as one of request's property named 'auth_carry'
+    If you would like to make identification fail in middleware(before handle requests),
+    return False.
+    You don't need to worry about exceptions.
+    '''
+    if 'username' in payload:
+        return payload['username']
+    else:
+        return False
+
+@routes.get('/index.html')
+async def authorised(request):
+    username = request['auth_carry']['username']
+    if username == 'admin':
+        return web.Response(text = 'pass')
+    else:
+        return web.Response(text = 'fail')
+
+secret_manager = SecretManager( secret = 'testsecret' )
+
+jwt = JWTHelper(
+            unauthorized_return_route = '' , 
+            unauthorized_return_route_handler = authorised,
+            authorized_return_page_handler = authorised,
+            secret_manager = secret_manager 
+        )
+        
+app = web.Application(middlewares=[ 
+        jwt.pre_jwt_identifier(),
+        jwt.post_jwt_router(),
+                        ])
+app.add_routes(routes)
+web.run_app(app)
+
+# Then you shall start a simulate client and encode a header with jwt authenrized payload with 'usernaem : admin' in it
+# and test if you got the corret response.
 ```
