@@ -1,7 +1,7 @@
 import datetime
 import random
 from collections import deque
-import jwt
+import jwt as pyjwt
 import re
 import asyncio
 
@@ -65,7 +65,7 @@ class SecretManager:
         return ''.join((rc() for i in range(n)))
 
     def decode(self , *args , **kwargs):
-        return jwt.decode( algorithm = self.algorithm ,*args , **kwargs)
+        return pyjwt.decode( algorithm = self.algorithm ,*args , **kwargs)
 
     def encode(self , payload , *args , **kwargs):
         if not isinstance(payload , dict):
@@ -80,7 +80,7 @@ class SecretManager:
             "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=self._exptime),
         }
         payload_.update(payload)
-        return jwt.encode(payload_ , self._secrets[-1] , algorithm = self.algorithm , *args , **kwargs)
+        return pyjwt.encode(payload_ , self._secrets[-1] , algorithm = self.algorithm , *args , **kwargs)
 
     def get_secrets(self):
         return tuple(self._secrets)
