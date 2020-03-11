@@ -131,9 +131,9 @@ from aiohttp import ClientSession
 from aiohttp_jwtplus import (
     SecretManager,
     JWTHelper,
-    basic_identifier,
-    basic_token_getter,
-    show_request_info
+    basic_identifier,     # it's a coroutine
+    basic_token_getter,   # it's a coroutine
+    show_request_info     # print function
 )
 
 
