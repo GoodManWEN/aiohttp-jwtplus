@@ -2,7 +2,7 @@
 [![fury](https://badge.fury.io/py/aiohttp-jwtplus.svg)](https://badge.fury.io/py/aiohttp-jwtplus)
 [![licence](https://img.shields.io/github/license/GoodManWEN/aiohttp-jwtplus)](https://github.com/GoodManWEN/aiohttp-jwtplus/blob/master/LICENSE)
 [![pyversions](https://img.shields.io/pypi/pyversions/aiohttp-jwtplus.svg)](https://pypi.org/project/aiohttp-jwtplus/)
-[![publish](https://github.com/GoodManWEN/aiohttp-jwtplus/workflows/Publish/badge.svg)](https://github.com/GoodManWEN/aiohttp-jwtplus/actions?query=workflow%3APublish)
+[![Publish](https://github.com/GoodManWEN/aiohttp-jwtplus/workflows/Publish/badge.svg)](https://github.com/GoodManWEN/aiohttp-jwtplus/actions?query=workflow%3APublish)
 [![build](https://github.com/GoodManWEN/aiohttp-jwtplus/workflows/Build/badge.svg)](https://github.com/GoodManWEN/aiohttp-jwtplus/actions?query=workflow%3ABuild)
 
 Aiohttp middleware and helper utils for working with JSON web token(signature).
