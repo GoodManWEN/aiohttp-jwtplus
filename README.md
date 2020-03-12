@@ -9,7 +9,7 @@ Aiohttp middleware and helper utils for working with JSON web token(signature).
 Added a post router for improving security level of SPAs &amp; auto refresh secrets.
 
 - Secret auto refresh.
-- Content totally separated.
+- Totally separated content.
 - Works on Python3.7+
 
 ## Requirements
