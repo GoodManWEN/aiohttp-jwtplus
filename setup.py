@@ -66,11 +66,13 @@ setup(
     packages = find_packages(),
     install_requires = get_install_requires('requirements.txt'),
     classifiers=[
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: MIT License',
         'Operating System :: POSIX :: Linux',
         'Operating System :: Microsoft :: Windows',
+        'Framework :: AsyncIO',
     ],
     python_requires='>=3.7',
     keywords=["jwt" , "aiohttp" , "aiohttp-jwt" ,"aiohttp-jwtplus"]
