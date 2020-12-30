@@ -8,8 +8,10 @@ logger = logging.getLogger(__name__)
 
 class JWTHelper:
 
-    def __init__(self , 
-        unauthorized_return_route , # this's an exception which means if you've alreadly logined ,you cannot access to this page. 
+    def __init__(
+        self , 
+        # this argument is an exception which means if you've alreadly logined ,you cannot access to this page. 
+        unauthorized_return_route , 
         unauthorized_return_route_handler,
         authorized_return_page_handler,
         secret_manager = None , 
@@ -17,7 +19,7 @@ class JWTHelper:
         identifier = None ,
         whitelist = () , 
         protected_apis = [] 
-        ):
+    ):
         if not isinstance(whitelist , tuple):
             raise TypeError(f'whitelist must be a tuple')
 
@@ -135,5 +137,3 @@ class JWTHelper:
         more information in test_behav.py
         '''
         pass
-
-

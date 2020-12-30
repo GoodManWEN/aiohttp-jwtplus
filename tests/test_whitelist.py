@@ -30,16 +30,18 @@ def cli(loop, aiohttp_client):
     secret_manager = SecretManager( secret = 'testsecret')
     global_secret = secret_manager
     jwt = JWTHelper(
-            unauthorized_return_route = '' , 
-            unauthorized_return_route_handler = unauthorised,
-            authorized_return_page_handler = authorised,
-            secret_manager = secret_manager ,
-            whitelist = ('/css/.+',)
-        )
-    app = web.Application(middlewares=[ 
-                jwt.pre_jwt_identifier(),
-                jwt.post_jwt_router(),
-                                ])
+        unauthorized_return_route = '' , 
+        unauthorized_return_route_handler = unauthorised,
+        authorized_return_page_handler = authorised,
+        secret_manager = secret_manager ,
+        whitelist = ('/css/.+',)
+    )
+    app = web.Application(
+        middlewares=[ 
+            jwt.pre_jwt_identifier(),
+            jwt.post_jwt_router(),
+        ]
+    )
     app.router.add_get('/index.html' , authorised)
     app.router.add_get('/login.html' , unauthorised)
     app.router.add_get('/css/1.css' , public_css1)
@@ -52,7 +54,7 @@ async def test_with_auth(cli):
     secret_manager = SecretManager( secret = 'testsecret')
     jwt = secret_manager.encode({'username' : 'jacky'})
     headers = {
-        'Authorization': "Bearer " + jwt.decode()
+        'Authorization': "Bearer " + jwt
     }
 
     resp = await cli.get('/css/1.css' , headers = headers)

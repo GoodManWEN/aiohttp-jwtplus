@@ -24,23 +24,26 @@ async def unauthorised(request):
 @pytest.fixture
 def cli(loop, aiohttp_client):
     global global_secret
-    secret_manager = SecretManager( secret = 'testsecret' ,    
-                                    refresh_interval = '1s' , 
-                                    scheme = "Bearer" ,  
-                                    algorithm = 'HS256' ,     
-                                    exptime = '2s' ,     
-                                    )
+    secret_manager = SecretManager( 
+        secret = 'testsecret' ,    
+        refresh_interval = '1s' , 
+        scheme = "Bearer" ,  
+        algorithm = 'HS256' ,     
+        exptime = '2s' ,     
+    )
     global_secret = secret_manager
     jwt = JWTHelper(
-            unauthorized_return_route = '' , 
-            unauthorized_return_route_handler = unauthorised,
-            authorized_return_page_handler = authorised,
-            secret_manager = secret_manager 
-        )
-    app = web.Application(middlewares=[ 
-                jwt.pre_jwt_identifier(),
-                jwt.post_jwt_router(),
-                                ])
+        unauthorized_return_route = '' , 
+        unauthorized_return_route_handler = unauthorised,
+        authorized_return_page_handler = authorised,
+        secret_manager = secret_manager 
+    )
+    app = web.Application(
+        middlewares=[ 
+            jwt.pre_jwt_identifier(),
+            jwt.post_jwt_router(),
+        ]
+    )
     app.router.add_get('/index.html' , authorised)
     app.router.add_get('/login.html' , unauthorised)
     loop.create_task(secret_manager.auto_refresh())
@@ -52,7 +55,7 @@ async def test_with_auth(cli):
     secret_manager = SecretManager( secret = secret_selected)
     jwt = secret_manager.encode({'username' : 'jacky'})
     headers = {
-        'Authorization': "Bearer " + jwt.decode()
+        'Authorization': "Bearer " + jwt
     }
 
     resp = await cli.get('/index.html' , headers = {})

@@ -165,7 +165,7 @@ url_exts = [    '/index.html' ,
 jwt = secret_manager.encode({'username':'jacky'})
 
 headers = {
-    'Authorization': "Bearer " + jwt.decode()
+    'Authorization': "Bearer " + jwt
 }
 
 async def main():

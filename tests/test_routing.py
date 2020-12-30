@@ -25,26 +25,29 @@ async def setattr_(request):
 
 @pytest.fixture
 def cli(loop, aiohttp_client):
-    secret_manager = SecretManager( secret = 'testsecret' ,    
-                                    refresh_interval = '30d' , 
-                                    scheme = "Bearer" ,  
-                                    algorithm = 'HS256' ,     
-                                    exptime = '30d' ,     
-                                    )
+    secret_manager = SecretManager( 
+        secret = 'testsecret' ,    
+        refresh_interval = '30d' , 
+        scheme = "Bearer" ,  
+        algorithm = 'HS256' ,     
+        exptime = '30d' ,     
+    )
     jwt = JWTHelper(
-            unauthorized_return_route = '/login.html' , 
-            unauthorized_return_route_handler = login_spa_page,
-            authorized_return_page_handler = main_spa_page,
-            secret_manager = secret_manager , 
-            token_getter = basic_token_getter,  
-            identifier =  basic_identifier ,   
-            whitelist = ('/authentication', ) , 
-            protected_apis = ['/setattr',] 
-        )
-    app = web.Application(middlewares=[ 
-                jwt.pre_jwt_identifier(),
-                jwt.post_jwt_router(),
-                                ])
+        unauthorized_return_route = '/login.html' , 
+        unauthorized_return_route_handler = login_spa_page,
+        authorized_return_page_handler = main_spa_page,
+        secret_manager = secret_manager , 
+        token_getter = basic_token_getter,  
+        identifier =  basic_identifier ,   
+        whitelist = ('/authentication', ) , 
+        protected_apis = ['/setattr',] 
+    )
+    app = web.Application(
+        middlewares=[ 
+            jwt.pre_jwt_identifier(),
+            jwt.post_jwt_router(),
+        ]
+    )
     app.router.add_get('/index.html' , main_spa_page)
     app.router.add_get('/login.html' , login_spa_page)
     app.router.add_get('/authentication', loginapi)
@@ -76,7 +79,7 @@ async def test_with_auth(cli):
     secret_manager = SecretManager( secret = 'testsecret' )
     jwt = secret_manager.encode({'username' : 'jacky'})
     headers = {
-        'Authorization': "Bearer " + jwt.decode()
+        'Authorization': "Bearer " + jwt
     }
 
     resp = await cli.get('/index.html' , headers = headers)
@@ -103,7 +106,7 @@ async def test_with_wrong_auth(cli):
     secret_manager = SecretManager( secret = 'testsecret' )
     jwt = secret_manager.encode({'username' : 'jacky'})
     wrong_headers = {
-        'Authorization': "Bearer " + jwt.decode()[:-1]
+        'Authorization': "Bearer " + jwt[:-1]
     }
 
     resp = await cli.get('/index.html' , headers = wrong_headers)
@@ -131,7 +134,7 @@ async def test_with_exped_auth(cli):
                                     )
     jwt = secret_manager.encode({'username' : 'jacky'})
     headers = {
-        'Authorization': "Bearer " + jwt.decode()
+        'Authorization': "Bearer " + jwt
     }
 
     resp = await cli.get('/index.html' , headers = headers)

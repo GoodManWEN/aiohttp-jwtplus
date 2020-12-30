@@ -21,26 +21,29 @@ async def bear(request):
 
 @pytest.fixture
 def cli(loop, aiohttp_client):
-    secret_manager = SecretManager( secret = 'testsecret' ,    
-                                    refresh_interval = '30d' , 
-                                    scheme = "Bearer" ,  
-                                    algorithm = 'HS256' ,     
-                                    exptime = '30d' ,     
-                                    )
+    secret_manager = SecretManager( 
+        secret = 'testsecret' ,    
+        refresh_interval = '30d' , 
+        scheme = "Bearer" ,  
+        algorithm = 'HS256' ,     
+        exptime = '30d' ,     
+    )
     jwt = JWTHelper(
-            unauthorized_return_route = '' , 
-            unauthorized_return_route_handler = index,
-            authorized_return_page_handler = index,
-            secret_manager = secret_manager , 
-            token_getter = basic_token_getter,  
-            identifier =  basic_identifier ,   
-            whitelist = () , 
-            protected_apis = [] 
-        )
-    app = web.Application(middlewares=[ 
-                jwt.pre_jwt_identifier(),
-                jwt.post_jwt_router(),
-                                ])
+        unauthorized_return_route = '' , 
+        unauthorized_return_route_handler = index,
+        authorized_return_page_handler = index,
+        secret_manager = secret_manager , 
+        token_getter = basic_token_getter,  
+        identifier =  basic_identifier ,   
+        whitelist = () , 
+        protected_apis = [] 
+    )
+    app = web.Application(
+        middlewares=[ 
+            jwt.pre_jwt_identifier(),
+            jwt.post_jwt_router(),
+        ]
+    )
     app.router.add_get('/index.html' , index)
     app.router.add_get('/bear' ,bear)
     return loop.run_until_complete(aiohttp_client(app))
@@ -49,7 +52,7 @@ async def test_idnt(cli):
     secret_manager = SecretManager( secret = 'testsecret' )
     jwt = secret_manager.encode({'username' : 'jacky'})
     headers = {
-        'Authorization': "Bearer " + jwt.decode()
+        'Authorization': "Bearer " + jwt
     }
 
     resp = await cli.get('/index.html' , headers = headers)
@@ -68,7 +71,7 @@ async def test_unicode(cli):
     secret_manager = SecretManager( secret = 'testsecret' )
     jwt = secret_manager.encode({'username' : '你好世界'})
     headers = {
-        'Authorization': "Bearer " + jwt.decode()
+        'Authorization': "Bearer " + jwt
     }
 
     resp = await cli.get('/index.html' , headers = headers)

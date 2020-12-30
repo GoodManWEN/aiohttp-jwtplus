@@ -27,4 +27,3 @@ def show_request_info(request):
     print(f"\tauthen status :\t{request['auth_status']}")
     print(f"\tcarry words   :\t{request['auth_carry']}")
     print("\t\t\t*/")
-    
