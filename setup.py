@@ -1,3 +1,5 @@
+# requires for 'bs4' and 'lxml' packages 
+
 from setuptools import setup, find_packages
 from requests import get as rget
 from bs4 import BeautifulSoup
@@ -31,12 +33,13 @@ description = html.find('meta' ,{'name':'description'}).get('content')
 for kw in (' - GitHub', ' - GoodManWEN'):
     if ' - GitHub' in description:
         description = description[:description.index(' - GitHub')]
-html = BeautifulSoup(rget(release , headers).text ,'lxml')
-version = html.find('div',{'class':'release-header'}).find('a').text
+# html = BeautifulSoup(rget(release , headers).text ,'lxml')
+# version = html.find('div',{'class':'release-header'}).find('a').text
+version = '0.2.1'  # makes this code working
 logger.info(f"description: {description}")
 logger.info(f"version: {version}")
 
-#
+#version
 with open('README.md','r',encoding='utf-8') as f:
     long_description_lines = f.readlines()
 
