@@ -14,9 +14,9 @@ async def basic_token_getter(request):
 
 async def basic_identifier(payload):
     if 'username' in payload:
-        ret = payload['username']
+        ret = payload['sub']  # https://en.wikipedia.org/wiki/JSON_Web_Token
         if ret:
-            return {'username' : ret , 'full_jwt_payload':payload}
+            return {'sub' : ret , 'full_jwt_payload':payload}
     else:
         return False
 
