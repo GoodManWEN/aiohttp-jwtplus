@@ -8,14 +8,15 @@ import asyncio
 class SecretManager:
 
     def __init__(
-            self , 
-            secret:str = "" , 
-            refresh_interval = 0 , 
-            scheme = 'Bearer',
-            algorithm = 'HS256' , 
-            exptime = '30d'
+            self, 
+            secret:str="", 
+            refresh_interval=0, 
+            scheme='Bearer',
+            algorithm='HS256', 
+            exptime='30d',
+            audience:str=None
         ):
-        if not isinstance(secret , str):
+        if not isinstance(secret, str):
             raise TypeError("Secret should be a string.")
 
         self.algorithm = algorithm
@@ -30,6 +31,7 @@ class SecretManager:
         self._exptime = self._parse_time(exptime)
         self.scheme = scheme
         self._scheme_bytes = self.scheme.encode('utf-8')
+        self._audience = audience
 
     def _parse_time(self, interval):  
 
@@ -65,8 +67,8 @@ class SecretManager:
         rc = lambda :chr(random.randint(0,74) + 48)
         return ''.join((rc() for i in range(n)))
 
-    def decode(self , *args , **kwargs):
-        return pyjwt.decode( algorithms = [self.algorithm,] ,*args , **kwargs)
+    def decode(self, *args, **kwargs):
+        return pyjwt.decode(algorithms=[self.algorithm], audience=self._audience, *args, **kwargs)
 
     def encode(self , payload , *args , **kwargs):
         if not isinstance(payload , dict):

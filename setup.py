@@ -1,7 +1,12 @@
+# requires for 'bs4' and 'lxml' packages 
+
 from setuptools import setup, find_packages
 from requests import get as rget
 from bs4 import BeautifulSoup
-import logging , sys
+import logging, sys
+
+VERSION = '0.2.1'  # Setup script should work for any branch, not for releases. Usually, the version in repo is the lattest and not released
+
 # init logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,7 +23,6 @@ def get_install_requires(filename):
 
 # 
 url = 'https://github.com/GoodManWEN/aiohttp-jwtplus'
-release = f'{url}/releases/latest'
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
     "Connection": "keep-alive",
@@ -31,12 +35,11 @@ description = html.find('meta' ,{'name':'description'}).get('content')
 for kw in (' - GitHub', ' - GoodManWEN'):
     if ' - GitHub' in description:
         description = description[:description.index(' - GitHub')]
-html = BeautifulSoup(rget(release , headers).text ,'lxml')
-version = html.find('div',{'class':'release-header'}).find('a').text
+version = VERSION
 logger.info(f"description: {description}")
 logger.info(f"version: {version}")
 
-#
+#version
 with open('README.md','r',encoding='utf-8') as f:
     long_description_lines = f.readlines()
 

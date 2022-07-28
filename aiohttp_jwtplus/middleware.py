@@ -91,6 +91,8 @@ class JWTHelper:
         async def _router(request, handler):
             try:
 
+                if request.method.lower() == 'options':  # to enable CORS       
+                    return await handler(request)
                 if self._whitelist:
                     if check_if_request_in_whitelist(request.path , self._whitelist):
                         return await handler(request)
